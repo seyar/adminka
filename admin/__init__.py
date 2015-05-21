@@ -7,9 +7,13 @@ from flask.ext.admin import Admin
 from flask_admin.contrib import fileadmin
 from admin import views
 
+from flask.ext.login import LoginManager
+from flask.ext.babel import Babel, lazy_gettext
+
+
 app = Flask(__name__, static_folder='uploads')
 app.config["MONGODB_SETTINGS"] = {'DB': "rest"}
-app.config["SECRET_KEY"] = ""
+app.config["SECRET_KEY"] = "12312312"
 
 # Create models
 db = MongoEngine(app)
@@ -50,6 +54,7 @@ class Post(db.Document):
 
     dateCreated = db.DateTimeField(default=datetime.datetime.now, required=True)
     title = db.StringField(max_length=255, required=True)
+    url = db.StringField(max_length=255, required=True)
     slug = db.StringField(max_length=255, required=True)
     textPreview = db.StringField(max_length=255, required=True)
     text = db.StringField(required=True)
