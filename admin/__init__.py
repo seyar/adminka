@@ -73,6 +73,7 @@ class Post(db.Document):
     source = db.URLField(max_length=255)
     status = db.ListField(db.StringField(choices=CHOICES))
     hasVideo = db.BooleanField()
+    ingridients = db.StringField(max_length=65000)
 
     def __unicode__(self):
         return self.title
