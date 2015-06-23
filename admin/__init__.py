@@ -3,8 +3,9 @@ import os.path as op
 import datetime
 from flask import Flask
 from flask.ext.mongoengine import MongoEngine
-from flask.ext.admin import Admin
-from flask_admin.contrib import fileadmin
+from flask.ext.admin import Admin, form
+from flask.ext.admin.form import rules
+from flask.ext.admin.contrib import fileadmin
 from admin import views
 
 from flask.ext.login import LoginManager
@@ -14,6 +15,13 @@ from flask.ext.babel import Babel, lazy_gettext
 app = Flask(__name__, static_folder='uploads')
 app.config["MONGODB_SETTINGS"] = {'DB': "rest"}
 app.config["SECRET_KEY"] = "12312312"
+
+# Create directory for file fields to use
+file_path = op.join(op.dirname(__file__), 'uploads')
+try:
+    os.mkdir(file_path)
+except OSError:
+    pass
 
 # Create models
 db = MongoEngine(app)
@@ -42,6 +50,7 @@ class Category(db.Document):
     CHOICES = ("active", "inactive")
 
     title = db.StringField(max_length=255, required=True)
+    url = db.StringField(max_length=255, required=True)
     description = db.StringField(max_length=255)
     status = db.ListField(db.StringField(choices=CHOICES))
     orderId = db.IntField()
@@ -73,6 +82,23 @@ class Post(db.Document):
         'indexes': ['dateCreated', 'slug'],
         'ordering': ['-created_at']
     }
+
+# Delete hooks for models, delete files if models are getting deleted
+# @listens_for(Post, 'after_delete')
+# def del_image(mapper, connection, target):
+#     if target.path:
+#         # Delete image
+#         try:
+#             os.remove(op.join(file_path, target.path))
+#         except OSError:
+#             pass
+#
+#         # Delete thumbnail
+#         try:
+#             os.remove(op.join(file_path,
+#                               form.thumbgen_filename(target.path)))
+#         except OSError:
+#             pass
 
 # Flask views
 @app.route('/')

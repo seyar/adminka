@@ -12,3 +12,4 @@ guess_language
 flipflop
 coverage
 Flask-Mongoengine
+Pillow
