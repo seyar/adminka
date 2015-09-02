@@ -52,6 +52,7 @@ class Category(db.Document):
     title = db.StringField(max_length=255, required=True)
     url = db.StringField(max_length=255, required=True)
     description = db.StringField(max_length=255)
+    source = db.StringField(max_length=255)
     status = db.ListField(db.StringField(choices=CHOICES))
     orderId = db.IntField()
 
